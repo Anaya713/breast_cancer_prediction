@@ -27,12 +27,12 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 model.fit(X_scaled, Y, epochs=10, verbose=0)
 
-# Streamlit UI setup
+# Streamlit UI
 st.set_page_config(page_title="Breast Cancer Detection", layout="wide")
 st.title("🩺 Breast Cancer Detection")
 st.write("Adjust the sliders for tumor features to predict if it’s *Benign* or *Malignant*.")
 
-# Sliders for features in 3 columns
+# Sliders for features
 user_input = []
 cols = st.columns(3)
 
@@ -51,22 +51,14 @@ for i, feature in enumerate(feature_names):
         )
     user_input.append(val)
 
-# Prediction button
+# Prediction
 if st.button("🔍 Predict"):
     input_array = np.array(user_input).reshape(1, -1)
     input_scaled = scaler.transform(input_array)
     prediction = model.predict(input_scaled)
     pred_label = np.argmax(prediction)
-    confidence = prediction[0][pred_label] * 100
-
-    # Display result with colored card
+    st.subheader("Prediction Result")
     if pred_label == 1:
-        st.markdown(
-            f"<div style='padding:20px; border-radius:10px; background-color:#d4edda; color:#155724; font-weight:bold; font-size:20px;'>✅ Benign Tumor<br>Confidence: {confidence:.2f}%</div>",
-            unsafe_allow_html=True
-        )
+        st.success("✅ Benign Tumor")
     else:
-        st.markdown(
-            f"<div style='padding:20px; border-radius:10px; background-color:#f8d7da; color:#721c24; font-weight:bold; font-size:20px;'>⚠ Malignant Tumor<br>Confidence: {confidence:.2f}%</div>",
-            unsafe_allow_html=True
-        )
+        st.error("⚠ Malignant Tumor")
